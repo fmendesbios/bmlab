@@ -39,6 +39,22 @@ jobs:
         run: |
           composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
 
+      - name: Test SFTP connection
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_PASS: ${{ secrets.DEPLOY_PASS }}
+          DEPLOY_PORT: ${{ secrets.DEPLOY_PORT }}
+        run: |
+          set -euo pipefail
+          echo "DNS:"
+          getent hosts "$DEPLOY_HOST" || true
+          echo "Port check:"
+          timeout 5 bash -lc "cat < /dev/null > /dev/tcp/$DEPLOY_HOST/$DEPLOY_PORT" && echo "Port $DEPLOY_PORT ok"
+          sudo apt-get update -y
+          sudo apt-get install -y sshpass
+          sshpass -p "$DEPLOY_PASS" ssh -p "$DEPLOY_PORT" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "$DEPLOY_USER@$DEPLOY_HOST" "echo CONNECTED"
+
       - name: Deploy via SCP
         uses: appleboy/scp-action@v0.1.7
         with:
