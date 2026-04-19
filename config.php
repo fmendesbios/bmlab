@@ -7,6 +7,20 @@ $usuario_db = 'root';
 $senha_db   = '';
 $banco      = 'bmlab';
 
+if (file_exists(__DIR__ . '/config.local.php')) {
+    require __DIR__ . '/config.local.php';
+} else {
+    $envHost = getenv('BMLAB_DB_HOST');
+    $envUser = getenv('BMLAB_DB_USER');
+    $envPass = getenv('BMLAB_DB_PASS');
+    $envName = getenv('BMLAB_DB_NAME');
+
+    if ($envHost !== false && $envHost !== '') $host = $envHost;
+    if ($envUser !== false && $envUser !== '') $usuario_db = $envUser;
+    if ($envPass !== false) $senha_db = $envPass;
+    if ($envName !== false && $envName !== '') $banco = $envName;
+}
+
 $conn = new mysqli($host, $usuario_db, $senha_db, $banco);
 
 if ($conn->connect_error) {
