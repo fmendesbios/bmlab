@@ -48,25 +48,28 @@ jobs:
         run: |
           set -euo pipefail
           echo "DNS:"
-          getent hosts "$DEPLOY_HOST" || true
+          getent ahostsv4 "$DEPLOY_HOST" || true
           echo "Port check:"
           timeout 5 bash -lc "cat < /dev/null > /dev/tcp/$DEPLOY_HOST/$DEPLOY_PORT" && echo "Port $DEPLOY_PORT ok"
           sudo apt-get update -y
           sudo apt-get install -y sshpass
-          sshpass -p "$DEPLOY_PASS" ssh -p "$DEPLOY_PORT" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "$DEPLOY_USER@$DEPLOY_HOST" "echo CONNECTED"
+          sshpass -p "$DEPLOY_PASS" ssh -4 -p "$DEPLOY_PORT" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "$DEPLOY_USER@$DEPLOY_HOST" "echo CONNECTED"
 
-      - name: Deploy via SCP
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.DEPLOY_HOST }}
-          username: ${{ secrets.DEPLOY_USER }}
-          password: ${{ secrets.DEPLOY_PASS }}
-          port: ${{ secrets.DEPLOY_PORT }}
-          source: |
-            *
-            !.github
-            !node_modules
-            !src
-          target: ${{ secrets.DEPLOY_PATH }}
-          overwrite: true
-          debug: true
+      - name: Deploy via rsync (SFTP/SSH)
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_PASS: ${{ secrets.DEPLOY_PASS }}
+          DEPLOY_PORT: ${{ secrets.DEPLOY_PORT }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        run: |
+          set -euo pipefail
+          sudo apt-get update -y
+          sudo apt-get install -y rsync sshpass
+          sshpass -p "$DEPLOY_PASS" rsync -az --delete \
+            --exclude ".git/" \
+            --exclude ".github/" \
+            --exclude "node_modules/" \
+            --exclude "src/" \
+            -e "ssh -4 -p $DEPLOY_PORT -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" \
+            "./" "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH"
