@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  /* Custom scrollbar for sidebar */
+  .drawer-side .menu::-webkit-scrollbar {
+      width: 5px;
+  }
+
+  .drawer-side .menu::-webkit-scrollbar-thumb {
+      background-color: #ccc;
+      border-radius: 5px;
+  }
+
+  /* Sidebar active state match */
+  .menu li>a.active {
+      background-color: #00B298;
+      color: white;
+  }
+}

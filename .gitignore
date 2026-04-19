@@ -1,0 +1,9 @@
+/node_modules/
+/vendor/
+/certs/*.pfx
+/config.local.php
+/.env
+/uploads/resultados/
+/public/uploads/resultados/
+/temp_certs/
+/*.log
