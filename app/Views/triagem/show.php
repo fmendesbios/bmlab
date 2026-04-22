@@ -57,17 +57,15 @@ $msgError = isset($_GET['error']) ? 'Erro ao processar solicitação. Verifique 
                 <div class="card-body p-0">
                     <div class="p-4 border-b flex justify-between items-center">
                         <h2 class="card-title text-sm uppercase text-gray-500">Exames Solicitados</h2>
-                        <label class="cursor-pointer label">
-                            <span class="label-text mr-2">Selecionar Todos</span>
-                            <input type="checkbox" class="checkbox checkbox-sm" id="selectAll">
-                        </label>
                     </div>
 
                     <div class="overflow-x-auto">
                         <table class="table w-full">
                             <thead>
                                 <tr>
-                                    <th class="w-12 text-center"></th>
+                                    <th class="w-12 text-center">
+                                        <input type="checkbox" class="checkbox checkbox-sm" id="selectAll" aria-label="Selecionar todos">
+                                    </th>
                                     <th>Amostra</th>
                                     <th>Exame / Material</th>
                                     <th>Status</th>
