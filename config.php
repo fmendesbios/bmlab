@@ -21,7 +21,15 @@ if (file_exists(__DIR__ . '/config.local.php')) {
     if ($envName !== false && $envName !== '') $banco = $envName;
 }
 
-$conn = new mysqli($host, $usuario_db, $senha_db, $banco);
+try {
+    $conn = new mysqli($host, $usuario_db, $senha_db, $banco);
+} catch (Throwable $e) {
+    if ($host === 'localhost') {
+        $conn = new mysqli('127.0.0.1', $usuario_db, $senha_db, $banco);
+    } else {
+        throw $e;
+    }
+}
 
 if ($conn->connect_error) {
     die('Erro na conexão com o banco de dados: ' . $conn->connect_error);
