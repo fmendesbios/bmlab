@@ -212,11 +212,16 @@
                     </div>
                     <div class="md:col-span-2">
                         <label class="label"><span class="label-text">Validade</span></label>
-                        <input type="date" name="validade" id="orc_validade" class="input input-bordered w-full" required>
+                        <div class="join w-full">
+                            <input type="date" name="validade" id="orc_validade" class="input input-bordered join-item flex-1 min-w-0" required>
+                            <button type="button" class="btn btn-outline btn-square join-item" onclick="abrirCalendario('orc_validade')" aria-label="Selecionar data">
+                                <i class="bi bi-calendar3"></i>
+                            </button>
+                        </div>
                     </div>
                     <div class="md:col-span-8">
                         <label class="label"><span class="label-text">Paciente</span></label>
-                        <div class="flex gap-4 items-center">
+                        <div class="flex flex-wrap gap-4 items-center pl-2">
                             <label class="cursor-pointer label gap-2">
                                 <input type="radio" name="modo_paciente" value="cadastrado" class="radio radio-primary" id="pac_modo_cad" checked>
                                 <span class="label-text">Cadastrado</span>
@@ -468,6 +473,17 @@
             minimumFractionDigits: 2,
             maximumFractionDigits: 2
         });
+    }
+
+    function abrirCalendario(inputId) {
+        const el = document.getElementById(inputId);
+        if (!el) return;
+        if (typeof el.showPicker === 'function') {
+            el.showPicker();
+            return;
+        }
+        el.focus();
+        el.click();
     }
 
     // Dropdown Search Helper
